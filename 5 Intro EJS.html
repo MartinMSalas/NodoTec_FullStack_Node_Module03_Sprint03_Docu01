@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro EJS</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+    <div class="stackedit__html">
+        <h3 id="módulo-7-introducción-a-ejs-para-node.js">Módulo 7: Introducción a EJS para Node.js</h3>
+        <p>EJS (Embedded JavaScript) es un motor de plantillas que permite integrar JavaScript en archivos HTML,
+            facilitando la generación de contenido dinámico en aplicaciones web. Al usar EJS con Express en Node.js,
+            puedes crear vistas dinámicas que presentan datos de forma interactiva y permiten una estructura modular y
+            mantenible para tus páginas web.</p>
+        <h4 id="¿qué-es-ejs">¿Qué es EJS?</h4>
+        <p>EJS es un motor de plantillas que permite la incrustación de JavaScript en HTML. A diferencia de otros
+            motores como Pug o Handlebars, EJS utiliza una sintaxis de JavaScript tradicional y sencilla que facilita el
+            aprendizaje y la integración en aplicaciones Node.js. Con EJS, es posible pasar datos dinámicos a la vista y
+            renderizar HTML con lógica condicional, bucles, y otros elementos propios de JavaScript, mejorando la
+            interactividad y personalización de las aplicaciones web.</p>
+        <h4 id="instalación-de-ejs">Instalación de EJS</h4>
+        <p>Para empezar a utilizar EJS, primero debes instalar el paquete en tu proyecto:</p>
+        <pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> <span class="token function">install</span> ejs
+</code></pre>
+        <p>Luego, configura EJS como el motor de vistas en Express:</p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <h3 id="¿por-qué-usar-ejs">¿Por Qué Usar EJS?</h3>
+        <p>EJS permite construir vistas dinámicas y modulares, lo cual es fundamental en aplicaciones web modernas. Al
+            usar EJS, puedes separar la lógica de presentación (frontend) de la lógica de negocio (backend), facilitando
+            el mantenimiento y el desarrollo de nuevas funcionalidades.</p>
+        <hr>
+        <h3 id="ejemplo-básico-renderización-de-una-vista-con-datos-dinámicos">Ejemplo Básico: Renderización de una
+            Vista con Datos Dinámicos</h3>
+        <p>A continuación, vamos a crear una vista que muestra un saludo personalizado basado en datos dinámicos
+            proporcionados por el servidor.</p>
+        <p><strong>Paso 1: Crear la Ruta</strong></p>
+        <p>Define una ruta en Express que renderice una vista EJS y envíe datos dinámicos a la misma:</p>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/greeting'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">"Carlos"</span><span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'greeting'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> name <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación Paso a Paso:</strong></p>
+        <ol>
+            <li><code>app.set('view engine', 'ejs');</code> — Configura EJS como el motor de vistas de la aplicación.
+            </li>
+            <li><code>app.get('/greeting', (req, res) =&gt; {...});</code> — Define una ruta GET en
+                <code>/greeting</code> que renderizará la vista.</li>
+            <li><code>res.render('greeting', { name });</code> — Renderiza la vista <code>greeting.ejs</code> y envía un
+                objeto con el dato <code>name</code> a la vista.</li>
+        </ol>
+        <p><strong>Paso 2: Crear la Vista en EJS</strong></p>
+        <p>Crea un archivo llamado <code>greeting.ejs</code> en una carpeta llamada <code>views</code>:</p>
+        <p><strong>Archivo <code>views/greeting.ejs</code>:</strong></p>
+        <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Greeting<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello, &lt;%= name %&gt;!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+        <p><strong>Explicación de la Vista:</strong></p>
+        <ol>
+            <li><code>&lt;%= name %&gt;</code> — Incrusta el valor de <code>name</code> en el HTML. EJS usa
+                <code>&lt;%= ... %&gt;</code> para mostrar variables, permitiendo que los datos dinámicos se integren en
+                el HTML.</li>
+        </ol>
+        <p>Al acceder a <code>http://localhost:3000/greeting</code>, el servidor renderizará la vista
+            <code>greeting.ejs</code>, y mostrará <code>Hello, Carlos!</code>.</p>
+        <hr>
+        <h3 id="ejemplo-intermedio-estructuras-de-control-en-ejs">Ejemplo Intermedio: Estructuras de Control en EJS</h3>
+        <p>EJS permite usar estructuras de control, como condicionales y bucles, para manejar datos de forma dinámica.
+            Esto es útil para crear listas, mostrar mensajes condicionales y estructurar el HTML.</p>
+        <h4 id="ejemplo-lista-de-productos">Ejemplo: Lista de Productos</h4>
+        <p><strong>Paso 1: Crear la Ruta</strong></p>
+        <p>Define una nueva ruta que envíe un arreglo de productos a la vista:</p>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript">app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/products'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> products <span class="token operator">=</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Laptop'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">1500</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Smartphone'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">700</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Tablet'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">300</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'products'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> products <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Paso 2: Crear la Vista con un Bucle</strong></p>
+        <p><strong>Archivo <code>views/products.ejs</code>:</strong></p>
+        <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Product List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Product List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+        &lt;% products.forEach(product =&gt; { %&gt;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>&lt;%= product.name %&gt; - $&lt;%= product.price %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>%</span> <span class="token attr-name">});</span> <span class="token attr-name">%</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+        <p><strong>Explicación de la Vista:</strong></p>
+        <ol>
+            <li><code>&lt;% products.forEach(product =&gt; { %&gt; ... &lt;% }); %&gt;</code> — Usa un bucle
+                <code>forEach</code> para iterar sobre el arreglo de productos y mostrar cada uno en una lista.</li>
+            <li><code>&lt;%= product.name %&gt;</code> y <code>&lt;%= product.price %&gt;</code> — Muestra el nombre y
+                precio de cada producto.</li>
+        </ol>
+        <p>Este código generará una lista de productos con nombre y precio.</p>
+        <hr>
+        <h3 id="buenas-prácticas-para-usar-ejs">Buenas Prácticas para Usar EJS</h3>
+        <ol>
+            <li>
+                <p><strong>Organizar las Vistas en Módulos</strong>: Al estructurar la aplicación, organiza las vistas
+                    en carpetas según su funcionalidad. Por ejemplo, coloca las vistas de usuario en
+                    <code>views/users</code> y las vistas de productos en <code>views/products</code>.</p>
+            </li>
+            <li>
+                <p><strong>Usar <code>partials</code> para Reutilizar Código</strong>: EJS permite incluir
+                    <code>partials</code>, que son fragmentos de código reutilizables, como el encabezado, el pie de
+                    página y la barra de navegación.</p>
+                <p><strong>Ejemplo de <code>partial</code> para Encabezado:</strong></p>
+                <p><strong>Archivo <code>views/partials/header.ejs</code>:</strong></p>
+                <pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>header</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>My Website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>nav</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Home<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/products<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Products<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/contact<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Contact<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>header</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                <p><strong>Uso del <code>partial</code> en la Vista Principal:</strong></p>
+                <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My Website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    &lt;%- include('partials/header') %&gt; <span class="token comment">&lt;!-- Incluye el encabezado --&gt;</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>main</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">&gt;</span></span>Welcome to my website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Here you'll find our products and services.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>main</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Escapar Datos para Evitar Inyecciones</strong>: Usa <code>&lt;%= ... %&gt;</code> para
+                    mostrar datos de usuario y evitar ataques de inyección. EJS escapa automáticamente el contenido de
+                    <code>&lt;%= ... %&gt;</code> para prevenir riesgos de seguridad.</p>
+            </li>
+            <li>
+                <p><strong>Evitar Lógica Compleja en Vistas</strong>: EJS permite usar JavaScript en las vistas, pero es
+                    recomendable mantener la lógica compleja en el backend para evitar sobrecargar las vistas y
+                    facilitar el mantenimiento.</p>
+            </li>
+        </ol>
+        <hr>
+        <h3 id="ejemplo-completo-aplicación-con-ejs-y-router-en-express">Ejemplo Completo: Aplicación con EJS y
+            <code>Router</code> en Express</h3>
+        <p>Para demostrar el uso de EJS en conjunto con <code>Router</code>, vamos a crear una pequeña aplicación que
+            muestra una lista de usuarios y el perfil de cada uno.</p>
+        <p><strong>Paso 1: Configurar el <code>Router</code> y las Rutas</strong></p>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./routes/userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Paso 2: Crear las Rutas de Usuario</strong></p>
+        <p><strong>Archivo <code>routes/userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Lista de usuarios simulada</span>
+<span class="token keyword">const</span> users <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Alice'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">30</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Bob'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">25</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Charlie'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">35</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta para listar usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'users'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> users <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta para mostrar el perfil de un usuario específico</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> user <span class="token operator">=</span> users<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span>u <span class="token operator">=&gt;</span> u<span class="token punctuation">.</span>id <span class="token operator">===</span> <span class="token function">parseInt</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'userProfile'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> user <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User not found'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Paso 3: Crear las Vistas <code>users.ejs</code> y <code>userProfile.ejs</code></strong></p>
+        <p><strong>Archivo <code>views/users.ejs</code>:</strong></p>
+        <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>User List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>User List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+        &lt;%
+
+ users.forEach(user =&gt; { %&gt;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/users/&lt;%= user.id %&gt;<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>&lt;%= user.name %&gt; (Age: &lt;%= user.age %&gt;)<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>%</span> <span class="token attr-name">});</span> <span class="token attr-name">%</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+        <p><strong>Archivo <code>views/userProfile.ejs</code>:</strong></p>
+        <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>User Profile<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>User Profile<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Name: &lt;%= user.name %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Age: &lt;%= user.age %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+        <p><strong>Explicación:</strong></p>
+        <ol>
+            <li><code>router.get('/')</code> — Define la ruta principal para listar usuarios.</li>
+            <li><code>router.get('/:id')</code> — Define la ruta de perfil, encontrando el usuario por ID y renderizando
+                <code>userProfile.ejs</code>.</li>
+            <li>En <code>users.ejs</code>, se genera una lista de usuarios con enlaces a sus perfiles individuales.</li>
+            <li>En <code>userProfile.ejs</code>, se muestra la información detallada del usuario.</li>
+        </ol>
+        <h3 id="resumen">Resumen</h3>
+        <p>EJS es un motor de plantillas sencillo y poderoso que facilita la creación de contenido dinámico en
+            aplicaciones Node.js. Al seguir una estructura modular con <code>Router</code> y buenas prácticas como el
+            uso de <code>partials</code> y la sanitización de datos, puedes construir aplicaciones web seguras,
+            eficientes y mantenibles.</p>
+    </div>
+</body>
+
+</html>

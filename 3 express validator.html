@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>express validator</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+    <div class="stackedit__html">
+        <h3 id="módulo-5-introducción-teórica-a-express-validator-middleware-en-node.js">Módulo 5: Introducción Teórica
+            a Express Validator Middleware en Node.js</h3>
+        <p><code>express-validator</code> es una biblioteca de middleware para Express que facilita la validación y la
+            sanitización de datos en aplicaciones Node.js. Permite validar la entrada de datos de manera rápida y
+            estructurada, garantizando que solo información correcta y en el formato deseado fluya hacia la lógica de
+            negocio. Este módulo proporcionará una base teórica de <code>express-validator</code>, una guía detallada
+            sobre su configuración, y ejemplos paso a paso que muestran su uso práctico en combinación con
+            <code>Router</code>.</p>
+        <h4 id="¿por-qué-usar-express-validator">¿Por Qué Usar <code>express-validator</code>?</h4>
+        <p>La validación de datos es crucial en aplicaciones web. Permite evitar errores y problemas de seguridad al
+            filtrar datos incorrectos o maliciosos, protegiendo tanto la aplicación como sus usuarios.
+            <code>express-validator</code> se integra perfectamente en el flujo de middleware de Express, permitiendo
+            definir reglas de validación en cada ruta y, si es necesario, sanitizar los datos para adaptarlos a un
+            formato seguro y esperado.</p>
+        <h4 id="configuración-de-express-validator">Configuración de <code>express-validator</code></h4>
+        <p>Para comenzar a usar <code>express-validator</code>, primero debemos instalar la biblioteca y luego
+            configurarla en el proyecto. Usaremos <code>Router</code> para organizar nuestras rutas y middleware.</p>
+        <ol>
+            <li>
+                <p><strong>Instalar <code>express-validator</code></strong>: Primero, ejecuta el siguiente comando en la
+                    terminal:</p>
+                <pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> <span class="token function">install</span> express-validator
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Configuración en el Proyecto</strong>: Importamos <code>express-validator</code> y usamos sus
+                    funciones para definir validaciones específicas en cada ruta.</p>
+            </li>
+        </ol>
+        <h4 id="ejemplo-de-validación-de-datos-de-usuario">Ejemplo de Validación de Datos de Usuario</h4>
+        <p>En este ejemplo, vamos a validar los datos de un formulario de registro de usuario. Usaremos
+            <code>Router</code> para organizar las rutas y aplicaremos varias validaciones a campos comunes:
+            <code>email</code>, <code>password</code>, y <code>username</code>.</p>
+        <p><strong>Justificación Teórica</strong>: Al validar los datos en el lado del servidor, podemos asegurarnos de
+            que solo la información correcta llegue a nuestra base de datos. Las validaciones de
+            <code>express-validator</code> nos permiten verificar que los datos tengan el formato adecuado y cumplen con
+            nuestras reglas, como una longitud mínima para la contraseña o el formato de correo electrónico.</p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta de registro de usuario con validaciones</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email address'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación Paso a Paso</strong>:</p>
+        <ol>
+            <li><code>import { body, validationResult } from 'express-validator';</code> — Importamos las funciones
+                <code>body</code> y <code>validationResult</code> de <code>express-validator</code> para validar y
+                verificar los resultados.</li>
+            <li><code>router.post('/register', [...], (req, res) =&gt; {...});</code> — Definimos una ruta
+                <code>POST</code> en <code>/register</code> para el registro de usuarios.</li>
+            <li><code>body('email').isEmail()...</code> — Valida que el campo <code>email</code> tenga formato de correo
+                electrónico.</li>
+            <li><code>.withMessage('...')</code> — Agrega un mensaje de error si la validación falla.</li>
+            <li><code>body('password').isLength({ min: 6 })...</code> — Verifica que la contraseña tenga al menos 6
+                caracteres.</li>
+            <li><code>body('username').notEmpty().isAlphanumeric()</code> — Verifica que el <code>username</code> no
+                esté vacío y sea alfanumérico.</li>
+            <li><code>const errors = validationResult(req);</code> — Extrae los errores de validación de la solicitud
+                actual.</li>
+            <li><code>if (!errors.isEmpty()) {...}</code> — Si hay errores, responde con un código de estado
+                <code>400</code> y muestra los errores.</li>
+            <li><code>res.send('User registered successfully');</code> — Si no hay errores, responde con un mensaje de
+                éxito.</li>
+        </ol>
+        <p>Este middleware permite validar múltiples campos de manera simple y estructurada, garantizando que los datos
+            cumplan con los requisitos definidos.</p>
+        <h4 id="ejemplo-avanzado-sanitización-y-validación-compleja">Ejemplo Avanzado: Sanitización y Validación
+            Compleja</h4>
+        <p><code>express-validator</code> no solo permite validar datos, sino también sanitizarlos para eliminar
+            caracteres innecesarios o potencialmente dañinos. En este ejemplo, agregaremos una validación y sanitización
+            más compleja para los campos de entrada.</p>
+        <p><strong>Ejemplo Completo con Validación y Sanitización</strong></p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta de registro de usuario con validaciones y sanitización</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email address'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">// Sanitiza el correo electrónico</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">// Elimina espacios al principio y final y escapa caracteres HTML</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">// Sanitiza el nombre de usuario</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación Paso a Paso</strong>:</p>
+        <ol>
+            <li><code>body('email').normalizeEmail();</code> — Aplica sanitización al correo electrónico para que tenga
+                un formato estándar (ej. elimina espacios).</li>
+            <li><code>body('password').trim().escape();</code> — Aplica sanitización a la contraseña, eliminando
+                espacios en blanco y caracteres especiales.</li>
+            <li><code>body('username').trim().escape();</code> — Sanitiza el <code>username</code> eliminando espacios y
+                escapando caracteres HTML.</li>
+        </ol>
+        <p>La sanitización añade una capa adicional de seguridad, asegurando que los datos lleguen al servidor en el
+            formato correcto y evitando potenciales inyecciones de código.</p>
+        <h4 id="gestión-de-errores-y-respuesta">Gestión de Errores y Respuesta</h4>
+        <p>En una aplicación, es importante gestionar de manera clara y estructurada los errores de validación para
+            facilitar la corrección de los datos por parte de los usuarios. <code>express-validator</code> facilita la
+            extracción y el envío de los errores en formato JSON.</p>
+        <p><strong>Justificación Teórica</strong>: Proporcionar mensajes de error detallados ayuda a los usuarios a
+            entender por qué sus datos no cumplen los requisitos y a corregirlos fácilmente.</p>
+        <p><strong>Ejemplo de Respuesta de Errores con <code>express-validator</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Invalid email format'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+                message<span class="token punctuation">:</span> <span class="token string">'Validation failed'</span><span class="token punctuation">,</span>
+                errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>error <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token punctuation">{</span>
+                    field<span class="token punctuation">:</span> error<span class="token punctuation">.</span>param<span class="token punctuation">,</span>
+                    message<span class="token punctuation">:</span> error<span class="token punctuation">.</span>msg<span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación</strong>:</p>
+        <ol>
+            <li><code>errors.array().map(error =&gt; {...})</code> — Transformamos la lista de errores para devolver un
+                formato más legible.</li>
+            <li><code>res.status(400).json({...})</code> — Enviamos una respuesta estructurada en JSON que contiene el
+                campo y el mensaje de error específico.</li>
+        </ol>
+        <h4 id="comparación-con-otras-herramientas-express-validator-vs-joi">Comparación con otras Herramientas:
+            <code>express-validator</code> vs <code>Joi</code></h4>
+        <p><code>express-validator</code> es ideal para proyectos en Express porque permite definir validaciones como
+            middleware directamente en las rutas, integrándose en el flujo de trabajo del servidor. Sin embargo, existen
+            otras bibliotecas como <code>Joi</code>, que es una herramienta más flexible y extensible, aunque no se
+            integra directamente como middleware en Express.</p>
+        <p><strong>Comparación</strong>:</p>
+        <ul>
+            <li><strong>Integración</strong>: <code>express-validator</code> se adapta fácilmente al flujo de Express,
+                mientras que <code>Joi</code> requiere configuraciones adicionales.</li>
+            <li><strong>Flexibilidad</strong>: <code>Joi</code> ofrece una sintaxis más detallada y una mayor cantidad
+                de opciones de validación.</li>
+            <li><strong>Ecosistema</strong>: <code>express-validator</code> se basa en la biblioteca
+                <code>validator.js</code>, centrada en validación y sanitización de datos web.</li>
+        </ul>
+        <h4 id="ejemplo-completo-de-uso-de-express-validator-en-conjunto-con-router-y-express.json">Ejemplo Completo de
+            Uso de <code>express-validator</code> en Conjunto con <code>Router</code> y <code>express.json</code></h4>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>express<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Middleware para analizar JSON</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+ <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Validación y sanitización en la ruta de registro de usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p>Este ejemplo completo usa <code>Router</code>, define validaciones y sanitizaciones para datos de usuario, y
+            gestiona errores en un formato claro. La combinación de <code>express-validator</code> y <code>Router</code>
+            en Express es una solución robusta y práctica para validar datos en aplicaciones web.</p>
+    </div>
+</body>
+
+</html>

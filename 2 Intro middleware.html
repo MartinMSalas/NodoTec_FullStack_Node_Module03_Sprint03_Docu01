@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro middleware</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+    <div class="stackedit__html">
+        <h3 id="módulo-4-introducción-teórica-a-middleware-en-express-para-node.js">Módulo 4: Introducción Teórica a
+            Middleware en Express para Node.js</h3>
+        <p>En el desarrollo de aplicaciones con Express, el middleware es fundamental para controlar el flujo de
+            solicitudes y respuestas. Los middleware son funciones que operan entre la solicitud del cliente y la
+            respuesta del servidor, permitiendo realizar operaciones como validación de datos, autenticación, registro
+            de solicitudes y manipulación de respuestas. En este módulo, veremos cómo configurar middleware
+            personalizado, aplicar middleware a rutas específicas con <code>Router</code>, y usaremos el motor de
+            plantillas EJS para renderizar vistas.</p>
+        <h4 id="¿qué-es-un-middleware">¿Qué es un Middleware?</h4>
+        <p>En Express, un middleware es una función que se ejecuta entre la solicitud y la respuesta, permitiendo
+            realizar operaciones intermedias antes de finalizar el proceso. Un middleware recibe tres parámetros:
+            <code>req</code> (la solicitud), <code>res</code> (la respuesta) y <code>next</code> (la función para pasar
+            el control al siguiente middleware). Al invocar <code>next()</code>, la solicitud pasa al siguiente
+            middleware en la pila, hasta llegar al manejador de ruta final.</p>
+        <h4 id="ejemplo-básico-de-middleware">Ejemplo Básico de Middleware</h4>
+        <p>Comencemos con un middleware simple que registra en la consola cada solicitud recibida. Este middleware puede
+            aplicarse globalmente para monitorear y depurar la actividad de la aplicación.</p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware global para registrar solicitudes</span>
+<span class="token keyword">const</span> <span class="token function-variable function">loggerMiddleware</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Request received: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>method<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>url<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// pasa el control al siguiente middleware o ruta</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>loggerMiddleware<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Hello World'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación línea a línea</strong>:</p>
+        <ol>
+            <li><code>import express from 'express';</code> — Importamos Express usando <code>import</code>.</li>
+            <li><code>const app = express();</code> — Creamos una instancia de la aplicación Express.</li>
+            <li><code>const loggerMiddleware = (req, res, next) =&gt; {...};</code> — Definimos el middleware
+                <code>loggerMiddleware</code>.</li>
+            <li><code>console.log(...)</code> — Imprime en la consola el método y la URL de cada solicitud recibida.
+            </li>
+            <li><code>next();</code> — Permite que la solicitud continúe hacia el siguiente middleware o ruta.</li>
+            <li><code>app.use(loggerMiddleware);</code> — Registra el middleware globalmente en la aplicación.</li>
+            <li><code>app.get('/', (req, res) =&gt; {...});</code> — Define una ruta simple que responde con “Hello
+                World”.</li>
+            <li><code>app.listen(3000, () =&gt; {...});</code> — Inicia el servidor en el puerto 3000.</li>
+        </ol>
+        <h4 id="middleware-específico-para-rutas-con-router">Middleware Específico para Rutas con <code>Router</code>
+        </h4>
+        <p>Para aplicaciones de gran escala, Express permite organizar rutas y middleware en módulos utilizando
+            <code>Router</code>. Esto facilita la organización del código y la aplicación de middleware específico a
+            conjuntos de rutas.</p>
+        <p><strong>Justificación</strong>: La estructura modular ayuda a organizar mejor las rutas y a aplicar
+            middleware únicamente donde es necesario, mejorando la mantenibilidad.</p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware de autenticación para usuarios</span>
+<span class="token keyword">const</span> <span class="token function-variable function">userAuthMiddleware</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'User Authentication Middleware'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>authorization<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">401</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Unauthorized'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Aplicamos el middleware de autenticación a todas las rutas de usuario</span>
+router<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>userAuthMiddleware<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Rutas de usuario</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User List'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`User Profile: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Usamos el router para las rutas de usuario</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación línea a línea de <code>userRoutes.js</code>:</strong></p>
+        <ol>
+            <li><code>import { Router } from 'express';</code> — Importamos <code>Router</code> desde Express.</li>
+            <li><code>const router = Router();</code> — Creamos una instancia de <code>Router</code>.</li>
+            <li><code>const userAuthMiddleware = (req, res, next) =&gt; {...};</code> — Definimos un middleware de
+                autenticación de usuario.</li>
+            <li><code>if (!req.headers.authorization) {...}</code> — Verifica el encabezado de autorización.</li>
+            <li><code>next();</code> — Si la autenticación es correcta, permite que la solicitud continúe.</li>
+            <li><code>router.use(userAuthMiddleware);</code> — Aplica el middleware de autenticación a todas las rutas
+                del <code>Router</code>.</li>
+            <li><code>router.get('/', (req, res) =&gt; {...});</code> — Define la ruta principal de usuarios.</li>
+            <li><code>export default router;</code> — Exporta el <code>Router</code> para usarlo en <code>app.js</code>.
+            </li>
+        </ol>
+        <h4 id="middleware-comunes-en-express">Middleware Comunes en Express</h4>
+        <p>Express se beneficia de middleware populares que manejan funcionalidades comunes como la seguridad, el
+            registro de solicitudes y el análisis de datos JSON. Aquí algunos ejemplos:</p>
+        <h3 id="official-express-middleware-modules">Official Express Middleware Modules</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Middleware Module</th>
+                    <th>Description</th>
+                    <th>Replaces Built-in Function (Express 3)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>body-parser</strong></td>
+                    <td>Parse HTTP request body. See also: <code>body</code>, <code>co-body</code>,
+                        <code>raw-body</code>.</td>
+                    <td><code>express.bodyParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>compression</strong></td>
+                    <td>Compress HTTP responses.</td>
+                    <td><code>express.compress</code></td>
+                </tr>
+                <tr>
+                    <td><strong>connect-rid</strong></td>
+                    <td>Generate unique request ID.</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td><strong>cookie-parser</strong></td>
+                    <td>Parse cookie header and populate <code>req.cookies</code>. See also <code>cookies</code> and
+                        <code>keygrip</code>.</td>
+                    <td><code>express.cookieParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>cookie-session</strong></td>
+                    <td>Establish cookie-based sessions.</td>
+                    <td><code>express.cookieSession</code></td>
+                </tr>
+                <tr>
+                    <td><strong>cors</strong></td>
+                    <td>Enable cross-origin resource sharing (CORS) with various options.</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td><strong>errorhandler</strong></td>
+                    <td>Development error-handling/debugging.</td>
+                    <td><code>express.errorHandler</code></td>
+                </tr>
+                <tr>
+                    <td><strong>method-override</strong></td>
+                    <td>Override HTTP methods using header.</td>
+                    <td><code>express.methodOverride</code></td>
+                </tr>
+                <tr>
+                    <td><strong>morgan</strong></td>
+                    <td>HTTP request logger.</td>
+                    <td><code>express.logger</code></td>
+                </tr>
+                <tr>
+                    <td><strong>multer</strong></td>
+                    <td>Handle multi-part form data.</td>
+                    <td><code>express.bodyParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>response-time</strong></td>
+                    <td>Record HTTP response time.</td>
+                    <td><code>express.responseTime</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-favicon</strong></td>
+                    <td>Serve a favicon.</td>
+                    <td><code>express.favicon</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-index</strong></td>
+                    <td>Serve directory listing for a given path.</td>
+                    <td><code>express.directory</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-static</strong></td>
+                    <td>Serve static files.</td>
+                    <td><code>express.static</code></td>
+                </tr>
+                <tr>
+                    <td><strong>session</strong></td>
+                    <td>Establish server-based sessions (development only).</td>
+                    <td><code>express.session</code></td>
+                </tr>
+                <tr>
+                    <td><strong>timeout</strong></td>
+                    <td>Set a timeout period for HTTP request processing.</td>
+                    <td><code>express.timeout</code></td>
+                </tr>
+                <tr>
+                    <td><strong>vhost</strong></td>
+                    <td>Create virtual domains.</td>
+                    <td><code>express.vhost</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 id="additional-popular-middleware-modules">Additional Popular Middleware Modules</h3>
+        <p>Estos modulos son tambien muy populares aunque no son mantenidos por Express</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Middleware Module</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>cls-rtracer</strong></td>
+                    <td>Middleware for CLS-based request id generation. Adds request ids into your logs.</td>
+                </tr>
+                <tr>
+                    <td><strong>connect-image-optimus</strong></td>
+                    <td>Optimize image serving by switching images to <code>.webp</code> or <code>.jxr</code> if
+                        possible.</td>
+                </tr>
+                <tr>
+                    <td><strong>error-handler-json</strong></td>
+                    <td>An error handler for JSON APIs (fork of <code>api-error-handler</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>express-debug</strong></td>
+                    <td>Development tool that adds info about template variables (locals), session, etc.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-partial-response</strong></td>
+                    <td>Filters JSON responses based on the <code>fields</code> query-string (similar to Google API’s
+                        Partial Response).</td>
+                </tr>
+                <tr>
+                    <td><strong>express-simple-cdn</strong></td>
+                    <td>Use a CDN for static assets, with support for multiple hosts.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-slash</strong></td>
+                    <td>Handles routes with and without trailing slashes.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-uncapitalize</strong></td>
+                    <td>Redirects HTTP requests containing uppercase to a canonical lowercase form.</td>
+                </tr>
+                <tr>
+                    <td><strong>helmet</strong></td>
+                    <td>Helps secure your apps by setting various HTTP headers.</td>
+                </tr>
+                <tr>
+                    <td><strong>join-io</strong></td>
+                    <td>Joins files on the fly to reduce the number of requests.</td>
+                </tr>
+                <tr>
+                    <td><strong>passport</strong></td>
+                    <td>Authentication using “strategies” such as OAuth, OpenID, and others. <a
+                            href="http://passportjs.org/">More info</a>.</td>
+                </tr>
+                <tr>
+                    <td><strong>static-expiry</strong></td>
+                    <td>Adds fingerprint URLs or caching headers for static assets.</td>
+                </tr>
+                <tr>
+                    <td><strong>view-helpers</strong></td>
+                    <td>Provides common helper methods for views.</td>
+                </tr>
+                <tr>
+                    <td><strong>sriracha-admin</strong></td>
+                    <td>Dynamically generate an admin site for Mongoose.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docu intro express Router</title>
+    <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+    <div class="stackedit__html">
+        <h2 id="documentación-de-node.js-introducción-a-express-con-es-modules">Documentación de Node.js: Introducción a
+            Express (con ES Modules)</h2>
+        <h3 id="¿qué-es-express-repaso">1) ¿Qué es Express? REPASO</h3>
+        <p><strong>Express.js</strong> es un framework minimalista y flexible para la creación de aplicaciones web y
+            APIs en <strong>Node.js</strong>. Express es popular en el desarrollo web debido a su simplicidad y a la
+            flexibilidad que ofrece, permitiendo que los desarrolladores integren solo los módulos necesarios para cada
+            aplicación. Esto se diferencia de otros frameworks más grandes y complejos que pueden hacer que la
+            aplicación sea menos flexible y difícil de mantener.</p>
+        <p>Express permite crear aplicaciones de una sola página, aplicaciones web multipágina y APIs completas de forma
+            rápida y organizada. Su naturaleza minimalista permite un control detallado sobre los componentes y la
+            posibilidad de personalizar la aplicación mediante middleware y módulos adicionales.</p>
+        <hr>
+        <h3 id="características-avanzadas-de-express-repaso">2) Características Avanzadas de Express REPASO</h3>
+        <p>Aquí cubrimos dos características avanzadas de Express: el uso de <strong>rutas anidadas y
+                parámetros</strong> y la capacidad de <strong>modularizar el enrutamiento</strong> con
+            <code>Express.Router</code>.</p>
+        <hr>
+        <h4 id="soporte-para-rutas-anidadas-y-parámetros">1. Soporte para Rutas Anidadas y Parámetros</h4>
+        <p>Express permite definir rutas dinámicas con <strong>parámetros de ruta</strong> que pueden capturar partes
+            específicas de la URL. Esto es útil para crear rutas anidadas o complejas que permiten acceder a recursos
+            específicos (por ejemplo, usuarios y sus posts, o categorías y productos en una tienda en línea).</p>
+        <h5 id="ejemplo-de-rutas-anidadas-y-parámetros">Ejemplo de Rutas Anidadas y Parámetros</h5>
+        <p>En el siguiente ejemplo, usamos una ruta con parámetros para gestionar posts específicos de un usuario:</p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Definición de una ruta con parámetros para usuarios y sus posts</span>
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/usuarios/:usuarioId/posts/:postId'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> usuarioId<span class="token punctuation">,</span> postId <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Mostrando el post </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>postId<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> del usuario </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>usuarioId<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p>Aquí:</p>
+        <ul>
+            <li><code>:usuarioId</code> y <code>:postId</code> son <strong>parámetros de ruta</strong> que capturan
+                valores específicos de la URL.</li>
+            <li><code>req.params</code> contiene los valores extraídos de la URL. Por ejemplo, si la URL solicitada es
+                <code>/usuarios/123/posts/456</code>, entonces <code>req.params.usuarioId</code> sería
+                <code>"123"</code> y <code>req.params.postId</code> sería <code>"456"</code>.</li>
+        </ul>
+        <p>Este enfoque es especialmente útil para manejar estructuras de URLs más complejas, como
+            <code>/categorias/:categoriaId/productos/:productoId</code>.</p>
+        <hr>
+        <h4 id="enrutamiento-avanzado-con-express.router">2. Enrutamiento Avanzado con Express.Router</h4>
+        <p>Para aplicaciones grandes, el código de enrutamiento puede volverse complejo si todas las rutas están en un
+            solo archivo. Express ofrece <strong>Express.Router</strong>, una herramienta que permite crear “mini
+            aplicaciones” de rutas que se pueden importar y usar en la aplicación principal. Esto ayuda a mantener el
+            código modular, organizado y fácil de mantener.</p>
+        <p><strong>Express.Router</strong> permite:</p>
+        <ul>
+            <li>Dividir las rutas en archivos separados, organizando el código en módulos.</li>
+            <li>Asignar grupos de rutas a una URL base específica en el servidor principal.</li>
+        </ul>
+        <h5 id="ejemplo-de-enrutamiento-modular-con-express.router">Ejemplo de Enrutamiento Modular con Express.Router
+        </h5>
+        <ol>
+            <li>
+                <p><strong>Definir las Rutas en un Módulo</strong><br>
+                    Creamos un archivo <code>blog.mjs</code> en la carpeta <code>routes</code> que contiene las rutas
+                    para los blogs:</p>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// routes/blog.mjs</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> express<span class="token punctuation">.</span><span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Definición de las rutas del blog</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Lista de blogs'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Blog con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Nuevo blog creado'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Importar el Módulo de Rutas en la Aplicación Principal</strong><br>
+                    En el archivo principal <code>server.mjs</code>, importamos el módulo de rutas y lo usamos en
+                    nuestra aplicación Express con una URL base <code>/blogs</code>:</p>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// server.mjs</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> blogRouter <span class="token keyword">from</span> <span class="token string">'./routes/blog.js'</span><span class="token punctuation">;</span> <span class="token comment">// Importamos el módulo de rutas</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/blogs'</span><span class="token punctuation">,</span> blogRouter<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Asignamos las rutas al prefijo '/blogs'</span>
+
+<span class="token keyword">const</span> PORT <span class="token operator">=</span> <span class="token number">3000</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span>PORT<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Servidor corriendo en el puerto </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>PORT<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                <p>En este caso:</p>
+                <ul>
+                    <li>La URL base <code>/blogs</code> hace que todas las rutas definidas en <code>blog.js</code>
+                        respondan con ese prefijo.</li>
+                    <li><code>GET /blogs</code> responderá con <code>"Lista de blogs"</code>.</li>
+                    <li><code>GET /blogs/:id</code> responderá con <code>"Blog con ID: &lt;id&gt;"</code>.</li>
+                    <li><code>POST /blogs</code> permitirá crear un nuevo blog.</li>
+                </ul>
+            </li>
+        </ol>
+        <p>Este enfoque modular permite agrupar rutas relacionadas en archivos separados, manteniendo el código claro y
+            organizado.</p>
+        <hr>
+        <h3 id="tipos-de-peticiones-http-en-express-repaso">3) Tipos de Peticiones HTTP en Express REPASO</h3>
+        <p>En esta sección, aprenderemos a configurar cada tipo de petición HTTP (<code>GET</code>, <code>POST</code>,
+            <code>PUT</code>, y <code>DELETE</code>) utilizando <strong>enrutado avanzado</strong> con
+            <code>Express.Router</code>. Este enfoque modular facilita la organización del código, especialmente en
+            aplicaciones grandes.</p>
+        <hr>
+        <h4 id="configuración-del-módulo-de-rutas">3.1 Configuración del Módulo de Rutas</h4>
+        <p>Para estructurar las rutas en módulos, crearemos un archivo de rutas <code>usuarios.js</code> en una carpeta
+            <code>routes</code>, donde manejaremos las diferentes peticiones para la ruta <code>/usuarios</code>.</p>
+        <ol>
+            <li>
+                <p><strong>Crear el Archivo de Rutas <code>usuarios.js</code></strong>:</p>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// routes/usuarios.js</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> router <span class="token operator">=</span> express<span class="token punctuation">.</span><span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener todos los usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Aquí está la lista de todos los usuarios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener un usuario específico por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Aquí está la información del usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Crear un nuevo usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nuevoUsuario <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Nuevo usuario creado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>nuevoUsuario<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Actualizar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> datosActualizados <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido actualizado con los datos: </span>
+            <span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>datosActualizados<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Eliminar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">delete</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido eliminado`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Integrar el Módulo de Rutas en el Servidor Principal</strong>:</p>
+                <p>En el archivo principal <code>server.js</code>, importamos y utilizamos el módulo de rutas para
+                    asignarle el prefijo <code>/usuarios</code>.</p>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// server.js</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> usuariosRouter <span class="token keyword">from</span> <span class="token string">'./routes/usuarios.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware para manejar JSON en el cuerpo de las solicitudes</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>express<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Asignamos el módulo de rutas al prefijo '/usuarios'</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/usuarios'</span><span class="token punctuation">,</span> usuariosRouter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> PORT <span class="token operator">=</span> <span class="token number">3000</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span>PORT<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> 
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Servidor corriendo en el puerto </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>PORT<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ol>
+        <hr>
+        <h4 id="tipos-de-peticiones-http-en-el-módulo-usuarios.js">3.2 Tipos de Peticiones HTTP en el Módulo
+            <code>usuarios.js</code></h4>
+        <p>A continuación, explicamos cada tipo de petición HTTP implementado en el módulo de rutas
+            <code>usuarios.js</code>:</p>
+        <ol>
+            <li>
+                <p><strong>Peticiones <code>GET</code></strong></p>
+                <ul>
+                    <li><strong>Obtener todos los usuarios</strong>: Devuelve una lista de todos los usuarios.</li>
+                    <li><strong>Obtener un usuario específico</strong>: Utiliza un parámetro <code>id</code> para
+                        recuperar información de un usuario específico.</li>
+                </ul>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Obtener todos los usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Aquí está la lista de todos los usuarios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener un usuario específico por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Aquí está la información del usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Peticiones <code>POST</code></strong></p>
+                <ul>
+                    <li><strong>Crear un nuevo usuario</strong>: Recibe los datos del nuevo usuario en el cuerpo de la
+                        solicitud y simula la creación de un nuevo usuario.</li>
+                </ul>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Crear un nuevo usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nuevoUsuario <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Nuevo usuario creado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>nuevoUsuario<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Peticiones <code>PUT</code></strong></p>
+                <ul>
+                    <li><strong>Actualizar un usuario existente</strong>: Utiliza el parámetro <code>id</code> para
+                        identificar al usuario y los datos en el cuerpo de la solicitud para actualizar su información.
+                    </li>
+                </ul>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Actualizar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> datosActualizados <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido actualizado con los datos: </span>
+            <span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>datosActualizados<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Peticiones <code>DELETE</code></strong></p>
+                <ul>
+                    <li><strong>Eliminar un usuario</strong>: Utiliza el parámetro <code>id</code> para identificar al
+                        usuario a eliminar y simula su eliminación.</li>
+                </ul>
+                <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Eliminar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">delete</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido eliminado`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+            </li>
+        </ol>
+        <hr>
+        <h3 id="resumen-de-los-métodos-http-en-express">Resumen de los Métodos HTTP en Express</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th><strong>Método</strong></th>
+                    <th><strong>Acción principal</strong></th>
+                    <th><strong>Ejemplo en una tienda</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>POST</code></td>
+                    <td>Crear un nuevo recurso</td>
+                    <td>Registrar un nuevo usuario</td>
+                </tr>
+                <tr>
+                    <td><code>DELETE</code></td>
+                    <td>Eliminar un recurso existente</td>
+                    <td>Borrar un producto</td>
+                </tr>
+                <tr>
+                    <td><code>PUT</code></td>
+                    <td>Actualizar (o crear) un recurso</td>
+                    <td>Cambiar el precio de un producto</td>
+                </tr>
+                <tr>
+                    <td><code>GET</code></td>
+                    <td>Solicitar/ver información del servidor</td>
+                    <td>Ver lista de productos</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Este resumen presenta los métodos HTTP principales utilizados en Express, con una acción típica asociada y
+            ejemplos en el contexto de una tienda.</p>
+        <hr>
+        <h3 id="módulo-4-introducción-teórica-a-middleware-en-express-para-node.js">Módulo 4: Introducción Teórica a
+            Middleware en Express para Node.js</h3>
+        <p>En el desarrollo de aplicaciones con Express, el middleware es fundamental para controlar el flujo de
+            solicitudes y respuestas. Los middleware son funciones que operan entre la solicitud del cliente y la
+            respuesta del servidor, permitiendo realizar operaciones como validación de datos, autenticación, registro
+            de solicitudes y manipulación de respuestas. En este módulo, veremos cómo configurar middleware
+            personalizado, aplicar middleware a rutas específicas con <code>Router</code>, y usaremos el motor de
+            plantillas EJS para renderizar vistas.</p>
+        <h4 id="¿qué-es-un-middleware">¿Qué es un Middleware?</h4>
+        <p>En Express, un middleware es una función que se ejecuta entre la solicitud y la respuesta, permitiendo
+            realizar operaciones intermedias antes de finalizar el proceso. Un middleware recibe tres parámetros:
+            <code>req</code> (la solicitud), <code>res</code> (la respuesta) y <code>next</code> (la función para pasar
+            el control al siguiente middleware). Al invocar <code>next()</code>, la solicitud pasa al siguiente
+            middleware en la pila, hasta llegar al manejador de ruta final.</p>
+        <h4 id="ejemplo-básico-de-middleware">Ejemplo Básico de Middleware</h4>
+        <p>Comencemos con un middleware simple que registra en la consola cada solicitud recibida. Este middleware puede
+            aplicarse globalmente para monitorear y depurar la actividad de la aplicación.</p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware global para registrar solicitudes</span>
+<span class="token keyword">const</span> <span class="token function-variable function">loggerMiddleware</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Request received: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>method<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>url<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// pasa el control al siguiente middleware o ruta</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>loggerMiddleware<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Hello World'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación línea a línea</strong>:</p>
+        <ol>
+            <li><code>import express from 'express';</code> — Importamos Express usando <code>import</code>.</li>
+            <li><code>const app = express();</code> — Creamos una instancia de la aplicación Express.</li>
+            <li><code>const loggerMiddleware = (req, res, next) =&gt; {...};</code> — Definimos el middleware
+                <code>loggerMiddleware</code>.</li>
+            <li><code>console.log(...)</code> — Imprime en la consola el método y la URL de cada solicitud recibida.
+            </li>
+            <li><code>next();</code> — Permite que la solicitud continúe hacia el siguiente middleware o ruta.</li>
+            <li><code>app.use(loggerMiddleware);</code> — Registra el middleware globalmente en la aplicación.</li>
+            <li><code>app.get('/', (req, res) =&gt; {...});</code> — Define una ruta simple que responde con “Hello
+                World”.</li>
+            <li><code>app.listen(3000, () =&gt; {...});</code> — Inicia el servidor en el puerto 3000.</li>
+        </ol>
+        <h4 id="middleware-específico-para-rutas-con-router">Middleware Específico para Rutas con <code>Router</code>
+        </h4>
+        <p>Para aplicaciones de gran escala, Express permite organizar rutas y middleware en módulos utilizando
+            <code>Router</code>. Esto facilita la organización del código y la aplicación de middleware específico a
+            conjuntos de rutas.</p>
+        <p><strong>Justificación</strong>: La estructura modular ayuda a organizar mejor las rutas y a aplicar
+            middleware únicamente donde es necesario, mejorando la mantenibilidad.</p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware de autenticación para usuarios</span>
+<span class="token keyword">const</span> <span class="token function-variable function">userAuthMiddleware</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'User Authentication Middleware'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>authorization<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">401</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Unauthorized'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Aplicamos el middleware de autenticación a todas las rutas de usuario</span>
+router<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>userAuthMiddleware<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Rutas de usuario</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User List'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`User Profile: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Usamos el router para las rutas de usuario</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación línea a línea de <code>userRoutes.js</code>:</strong></p>
+        <ol>
+            <li><code>import { Router } from 'express';</code> — Importamos <code>Router</code> desde Express.</li>
+            <li><code>const router = Router();</code> — Creamos una instancia de <code>Router</code>.</li>
+            <li><code>const userAuthMiddleware = (req, res, next) =&gt; {...};</code> — Definimos un middleware de
+                autenticación de usuario.</li>
+            <li><code>if (!req.headers.authorization) {...}</code> — Verifica el encabezado de autorización.</li>
+            <li><code>next();</code> — Si la autenticación es correcta, permite que la solicitud continúe.</li>
+            <li><code>router.use(userAuthMiddleware);</code> — Aplica el middleware de autenticación a todas las rutas
+                del <code>Router</code>.</li>
+            <li><code>router.get('/', (req, res) =&gt; {...});</code> — Define la ruta principal de usuarios.</li>
+            <li><code>export default router;</code> — Exporta el <code>Router</code> para usarlo en <code>app.js</code>.
+            </li>
+        </ol>
+        <h4 id="middleware-comunes-en-express">Middleware Comunes en Express</h4>
+        <p>Express se beneficia de middleware populares que manejan funcionalidades comunes como la seguridad, el
+            registro de solicitudes y el análisis de datos JSON. Aquí algunos ejemplos:</p>
+        <h3 id="official-express-middleware-modules">Official Express Middleware Modules</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Middleware Module</th>
+                    <th>Description</th>
+                    <th>Replaces Built-in Function (Express 3)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>body-parser</strong></td>
+                    <td>Parse HTTP request body. See also: <code>body</code>, <code>co-body</code>,
+                        <code>raw-body</code>.</td>
+                    <td><code>express.bodyParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>compression</strong></td>
+                    <td>Compress HTTP responses.</td>
+                    <td><code>express.compress</code></td>
+                </tr>
+                <tr>
+                    <td><strong>connect-rid</strong></td>
+                    <td>Generate unique request ID.</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td><strong>cookie-parser</strong></td>
+                    <td>Parse cookie header and populate <code>req.cookies</code>. See also <code>cookies</code> and
+                        <code>keygrip</code>.</td>
+                    <td><code>express.cookieParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>cookie-session</strong></td>
+                    <td>Establish cookie-based sessions.</td>
+                    <td><code>express.cookieSession</code></td>
+                </tr>
+                <tr>
+                    <td><strong>cors</strong></td>
+                    <td>Enable cross-origin resource sharing (CORS) with various options.</td>
+                    <td>NA</td>
+                </tr>
+                <tr>
+                    <td><strong>errorhandler</strong></td>
+                    <td>Development error-handling/debugging.</td>
+                    <td><code>express.errorHandler</code></td>
+                </tr>
+                <tr>
+                    <td><strong>method-override</strong></td>
+                    <td>Override HTTP methods using header.</td>
+                    <td><code>express.methodOverride</code></td>
+                </tr>
+                <tr>
+                    <td><strong>morgan</strong></td>
+                    <td>HTTP request logger.</td>
+                    <td><code>express.logger</code></td>
+                </tr>
+                <tr>
+                    <td><strong>multer</strong></td>
+                    <td>Handle multi-part form data.</td>
+                    <td><code>express.bodyParser</code></td>
+                </tr>
+                <tr>
+                    <td><strong>response-time</strong></td>
+                    <td>Record HTTP response time.</td>
+                    <td><code>express.responseTime</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-favicon</strong></td>
+                    <td>Serve a favicon.</td>
+                    <td><code>express.favicon</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-index</strong></td>
+                    <td>Serve directory listing for a given path.</td>
+                    <td><code>express.directory</code></td>
+                </tr>
+                <tr>
+                    <td><strong>serve-static</strong></td>
+                    <td>Serve static files.</td>
+                    <td><code>express.static</code></td>
+                </tr>
+                <tr>
+                    <td><strong>session</strong></td>
+                    <td>Establish server-based sessions (development only).</td>
+                    <td><code>express.session</code></td>
+                </tr>
+                <tr>
+                    <td><strong>timeout</strong></td>
+                    <td>Set a timeout period for HTTP request processing.</td>
+                    <td><code>express.timeout</code></td>
+                </tr>
+                <tr>
+                    <td><strong>vhost</strong></td>
+                    <td>Create virtual domains.</td>
+                    <td><code>express.vhost</code></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 id="additional-popular-middleware-modules">Additional Popular Middleware Modules</h3>
+        <p>Estos modulos son tambien muy populares aunque no son mantenidos por Express</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Middleware Module</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>cls-rtracer</strong></td>
+                    <td>Middleware for CLS-based request id generation. Adds request ids into your logs.</td>
+                </tr>
+                <tr>
+                    <td><strong>connect-image-optimus</strong></td>
+                    <td>Optimize image serving by switching images to <code>.webp</code> or <code>.jxr</code> if
+                        possible.</td>
+                </tr>
+                <tr>
+                    <td><strong>error-handler-json</strong></td>
+                    <td>An error handler for JSON APIs (fork of <code>api-error-handler</code>).</td>
+                </tr>
+                <tr>
+                    <td><strong>express-debug</strong></td>
+                    <td>Development tool that adds info about template variables (locals), session, etc.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-partial-response</strong></td>
+                    <td>Filters JSON responses based on the <code>fields</code> query-string (similar to Google API’s
+                        Partial Response).</td>
+                </tr>
+                <tr>
+                    <td><strong>express-simple-cdn</strong></td>
+                    <td>Use a CDN for static assets, with support for multiple hosts.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-slash</strong></td>
+                    <td>Handles routes with and without trailing slashes.</td>
+                </tr>
+                <tr>
+                    <td><strong>express-uncapitalize</strong></td>
+                    <td>Redirects HTTP requests containing uppercase to a canonical lowercase form.</td>
+                </tr>
+                <tr>
+                    <td><strong>helmet</strong></td>
+                    <td>Helps secure your apps by setting various HTTP headers.</td>
+                </tr>
+                <tr>
+                    <td><strong>join-io</strong></td>
+                    <td>Joins files on the fly to reduce the number of requests.</td>
+                </tr>
+                <tr>
+                    <td><strong>passport</strong></td>
+                    <td>Authentication using “strategies” such as OAuth, OpenID, and others. <a
+                            href="http://passportjs.org/">More info</a>.</td>
+                </tr>
+                <tr>
+                    <td><strong>static-expiry</strong></td>
+                    <td>Adds fingerprint URLs or caching headers for static assets.</td>
+                </tr>
+                <tr>
+                    <td><strong>view-helpers</strong></td>
+                    <td>Provides common helper methods for views.</td>
+                </tr>
+                <tr>
+                    <td><strong>sriracha-admin</strong></td>
+                    <td>Dynamically generate an admin site for Mongoose.</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr></hr>
+        <h3 id="módulo-5-introducción-teórica-a-express-validator-middleware-en-node.js">Módulo 5: Introducción Teórica
+            a Express Validator Middleware en Node.js</h3>
+        <p><code>express-validator</code> es una biblioteca de middleware para Express que facilita la validación y la
+            sanitización de datos en aplicaciones Node.js. Permite validar la entrada de datos de manera rápida y
+            estructurada, garantizando que solo información correcta y en el formato deseado fluya hacia la lógica de
+            negocio. Este módulo proporcionará una base teórica de <code>express-validator</code>, una guía detallada
+            sobre su configuración, y ejemplos paso a paso que muestran su uso práctico en combinación con
+            <code>Router</code>.</p>
+        <h4 id="¿por-qué-usar-express-validator">¿Por Qué Usar <code>express-validator</code>?</h4>
+        <p>La validación de datos es crucial en aplicaciones web. Permite evitar errores y problemas de seguridad al
+            filtrar datos incorrectos o maliciosos, protegiendo tanto la aplicación como sus usuarios.
+            <code>express-validator</code> se integra perfectamente en el flujo de middleware de Express, permitiendo
+            definir reglas de validación en cada ruta y, si es necesario, sanitizar los datos para adaptarlos a un
+            formato seguro y esperado.</p>
+        <h4 id="configuración-de-express-validator">Configuración de <code>express-validator</code></h4>
+        <p>Para comenzar a usar <code>express-validator</code>, primero debemos instalar la biblioteca y luego
+            configurarla en el proyecto. Usaremos <code>Router</code> para organizar nuestras rutas y middleware.</p>
+        <ol>
+            <li>
+                <p><strong>Instalar <code>express-validator</code></strong>: Primero, ejecuta el siguiente comando en la
+                    terminal:</p>
+                <pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> <span class="token function">install</span> express-validator
+</code></pre>
+            </li>
+            <li>
+                <p><strong>Configuración en el Proyecto</strong>: Importamos <code>express-validator</code> y usamos sus
+                    funciones para definir validaciones específicas en cada ruta.</p>
+            </li>
+        </ol>
+        <h4 id="ejemplo-de-validación-de-datos-de-usuario">Ejemplo de Validación de Datos de Usuario</h4>
+        <p>En este ejemplo, vamos a validar los datos de un formulario de registro de usuario. Usaremos
+            <code>Router</code> para organizar las rutas y aplicaremos varias validaciones a campos comunes:
+            <code>email</code>, <code>password</code>, y <code>username</code>.</p>
+        <p><strong>Justificación Teórica</strong>: Al validar los datos en el lado del servidor, podemos asegurarnos de
+            que solo la información correcta llegue a nuestra base de datos. Las validaciones de
+            <code>express-validator</code> nos permiten verificar que los datos tengan el formato adecuado y cumplen con
+            nuestras reglas, como una longitud mínima para la contraseña o el formato de correo electrónico.</p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta de registro de usuario con validaciones</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email address'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación Paso a Paso</strong>:</p>
+        <ol>
+            <li><code>import { body, validationResult } from 'express-validator';</code> — Importamos las funciones
+                <code>body</code> y <code>validationResult</code> de <code>express-validator</code> para validar y
+                verificar los resultados.</li>
+            <li><code>router.post('/register', [...], (req, res) =&gt; {...});</code> — Definimos una ruta
+                <code>POST</code> en <code>/register</code> para el registro de usuarios.</li>
+            <li><code>body('email').isEmail()...</code> — Valida que el campo <code>email</code> tenga formato de correo
+                electrónico.</li>
+            <li><code>.withMessage('...')</code> — Agrega un mensaje de error si la validación falla.</li>
+            <li><code>body('password').isLength({ min: 6 })...</code> — Verifica que la contraseña tenga al menos 6
+                caracteres.</li>
+            <li><code>body('username').notEmpty().isAlphanumeric()</code> — Verifica que el <code>username</code> no
+                esté vacío y sea alfanumérico.</li>
+            <li><code>const errors = validationResult(req);</code> — Extrae los errores de validación de la solicitud
+                actual.</li>
+            <li><code>if (!errors.isEmpty()) {...}</code> — Si hay errores, responde con un código de estado
+                <code>400</code> y muestra los errores.</li>
+            <li><code>res.send('User registered successfully');</code> — Si no hay errores, responde con un mensaje de
+                éxito.</li>
+        </ol>
+        <p>Este middleware permite validar múltiples campos de manera simple y estructurada, garantizando que los datos
+            cumplan con los requisitos definidos.</p>
+        <h4 id="ejemplo-avanzado-sanitización-y-validación-compleja">Ejemplo Avanzado: Sanitización y Validación
+            Compleja</h4>
+        <p><code>express-validator</code> no solo permite validar datos, sino también sanitizarlos para eliminar
+            caracteres innecesarios o potencialmente dañinos. En este ejemplo, agregaremos una validación y sanitización
+            más compleja para los campos de entrada.</p>
+        <p><strong>Ejemplo Completo con Validación y Sanitización</strong></p>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta de registro de usuario con validaciones y sanitización</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email address'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">// Sanitiza el correo electrónico</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">// Elimina espacios al principio y final y escapa caracteres HTML</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">// Sanitiza el nombre de usuario</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación Paso a Paso</strong>:</p>
+        <ol>
+            <li><code>body('email').normalizeEmail();</code> — Aplica sanitización al correo electrónico para que tenga
+                un formato estándar (ej. elimina espacios).</li>
+            <li><code>body('password').trim().escape();</code> — Aplica sanitización a la contraseña, eliminando
+                espacios en blanco y caracteres especiales.</li>
+            <li><code>body('username').trim().escape();</code> — Sanitiza el <code>username</code> eliminando espacios y
+                escapando caracteres HTML.</li>
+        </ol>
+        <p>La sanitización añade una capa adicional de seguridad, asegurando que los datos lleguen al servidor en el
+            formato correcto y evitando potenciales inyecciones de código.</p>
+        <h4 id="gestión-de-errores-y-respuesta">Gestión de Errores y Respuesta</h4>
+        <p>En una aplicación, es importante gestionar de manera clara y estructurada los errores de validación para
+            facilitar la corrección de los datos por parte de los usuarios. <code>express-validator</code> facilita la
+            extracción y el envío de los errores en formato JSON.</p>
+        <p><strong>Justificación Teórica</strong>: Proporcionar mensajes de error detallados ayuda a los usuarios a
+            entender por qué sus datos no cumplen los requisitos y a corregirlos fácilmente.</p>
+        <p><strong>Ejemplo de Respuesta de Errores con <code>express-validator</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Invalid email format'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">
+            .</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+                message<span class="token punctuation">:</span> <span class="token string">'Validation failed'</span><span class="token punctuation">,</span>
+                errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>error <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token punctuation">{</span>
+                    field<span class="token punctuation">:</span> error<span class="token punctuation">.</span>param<span class="token punctuation">,</span>
+                    message<span class="token punctuation">:</span> error<span class="token punctuation">.</span>msg<span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Explicación</strong>:</p>
+        <ol>
+            <li><code>errors.array().map(error =&gt; {...})</code> — Transformamos la lista de errores para devolver un
+                formato más legible.</li>
+            <li><code>res.status(400).json({...})</code> — Enviamos una respuesta estructurada en JSON que contiene el
+                campo y el mensaje de error específico.</li>
+        </ol>
+        <h4 id="comparación-con-otras-herramientas-express-validator-vs-joi">Comparación con otras Herramientas:
+            <code>express-validator</code> vs <code>Joi</code></h4>
+        <p><code>express-validator</code> es ideal para proyectos en Express porque permite definir validaciones como
+            middleware directamente en las rutas, integrándose en el flujo de trabajo del servidor. Sin embargo, existen
+            otras bibliotecas como <code>Joi</code>, que es una herramienta más flexible y extensible, aunque no se
+            integra directamente como middleware en Express.</p>
+        <p><strong>Comparación</strong>:</p>
+        <ul>
+            <li><strong>Integración</strong>: <code>express-validator</code> se adapta fácilmente al flujo de Express,
+                mientras que <code>Joi</code> requiere configuraciones adicionales.</li>
+            <li><strong>Flexibilidad</strong>: <code>Joi</code> ofrece una sintaxis más detallada y una mayor cantidad
+                de opciones de validación.</li>
+            <li><strong>Ecosistema</strong>: <code>express-validator</code> se basa en la biblioteca
+                <code>validator.js</code>, centrada en validación y sanitización de datos web.</li>
+        </ul>
+        <h4 id="ejemplo-completo-de-uso-de-express-validator-en-conjunto-con-router-y-express.json">Ejemplo Completo de
+            Uso de <code>express-validator</code> en Conjunto con <code>Router</code> y <code>express.json</code></h4>
+        <p><strong>Archivo <code>app.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>express<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Middleware para analizar JSON</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+ <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+        <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+        <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> body<span class="token punctuation">,</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Validación y sanitización en la ruta de registro de usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>
+    <span class="token string">'/register'</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+        <p>Este ejemplo completo usa <code>Router</code>, define validaciones y sanitizaciones para datos de usuario, y
+            gestiona errores en un formato claro. La combinación de <code>express-validator</code> y <code>Router</code>
+            en Express es una solución robusta y práctica para validar datos en aplicaciones web.</p>
+            <hr>
+            <h3 id="módulo-6-buenas-prácticas-de-express-validator-en-node.js">Módulo 6: Buenas Prácticas de
+                <code>express-validator</code> en Node.js</h3>
+            <p>Al usar <code>express-validator</code> en aplicaciones Node.js, es importante seguir buenas prácticas para
+                mejorar la organización, seguridad y eficiencia del código. Estas prácticas permiten estructurar las
+                validaciones de datos de manera clara y confiable, optimizando el flujo de validación y facilitando el
+                mantenimiento.</p>
+            <h4 id="modularizar-las-validaciones">1. Modularizar las Validaciones</h4>
+            <p>Es recomendable separar las validaciones de las rutas principales, especialmente en aplicaciones grandes.
+                Crear funciones específicas para cada conjunto de validaciones ayuda a mantener el código ordenado y
+                reutilizable.</p>
+            <p><strong>Ejemplo:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// validationRules.js</span>
+    <span class="token keyword">import</span> <span class="token punctuation">{</span> body <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">export</span> <span class="token keyword">const</span> <span class="token function-variable function">registerValidationRules</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email address'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">]</span><span class="token punctuation">;</span>
+    </code></pre>
+            <p><strong>Uso en las Rutas:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+    <span class="token keyword">import</span> <span class="token punctuation">{</span> registerValidationRules <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./validationRules.js'</span><span class="token punctuation">;</span>
+    <span class="token keyword">import</span> <span class="token punctuation">{</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/register'</span><span class="token punctuation">,</span> <span class="token function">registerValidationRules</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+    </code></pre>
+            <h4 id="centralizar-la-gestión-de-errores">2. Centralizar la Gestión de Errores</h4>
+            <p>Manejar los errores de validación en un middleware separado ayuda a mantener las rutas limpias y a unificar
+                el manejo de errores.</p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// errorMiddleware.js</span>
+    <span class="token keyword">import</span> <span class="token punctuation">{</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">export</span> <span class="token keyword">const</span> <span class="token function-variable function">handleValidationErrors</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span> errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    </code></pre>
+            <p><strong>Uso en las Rutas:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript">router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/register'</span><span class="token punctuation">,</span> <span class="token function">registerValidationRules</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> handleValidationErrors<span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    </code></pre>
+            <h4 id="usar-sanitización-en-datos-de-entrada">3. Usar Sanitización en Datos de Entrada</h4>
+            <p>La sanitización elimina caracteres innecesarios o potencialmente peligrosos en los datos de entrada,
+                mejorando la seguridad.</p>
+            <pre class=" language-javascript"><code class="prism  language-javascript">
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    </code></pre>
+            <h4 id="evitar-validaciones-redundantes">4. Evitar Validaciones Redundantes</h4>
+            <p>Evita validar datos innecesariamente, especialmente si ya han sido validados en el frontend o en pasos
+                anteriores del flujo de datos.</p>
+            <h4 id="documentar-las-validaciones">5. Documentar las Validaciones</h4>
+            <p>Proporciona documentación clara sobre los requisitos y restricciones de cada campo, lo cual facilita la
+                integración de otros desarrolladores y la comprensión de la API.</p>
+            <h4 id="usar-mensajes-de-error-claros">6. Usar Mensajes de Error Claros</h4>
+            <p>Los mensajes de error detallados ayudan a los usuarios a entender y corregir sus entradas.</p>
+            <h4 id="validar-en-el-cliente-también">7. Validar en el Cliente También</h4>
+            <p>Implementa validaciones del lado del cliente para mejorar la experiencia del usuario, sin depender
+                exclusivamente de ellas.</p>
+            <h4 id="no-depender-exclusivamente-de-validaciones-del-lado-del-cliente">8. No Depender Exclusivamente de
+                Validaciones del Lado del Cliente</h4>
+            <p>Dado que los datos pueden ser manipulados antes de llegar al servidor, siempre valida en el servidor para
+                garantizar la seguridad.</p>
+            <h4 id="formato-consistente-de-respuesta-de-errores">9. Formato Consistente de Respuesta de Errores</h4>
+            <p>Devuelve errores en un formato JSON consistente, lo cual facilita el manejo de errores en el frontend.</p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        status<span class="token punctuation">:</span> <span class="token string">'error'</span><span class="token punctuation">,</span>
+        message<span class="token punctuation">:</span> <span class="token string">'Validation failed'</span><span class="token punctuation">,</span>
+        errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>error <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token punctuation">{</span>
+            field<span class="token punctuation">:</span> error<span class="token punctuation">.</span>param<span class="token punctuation">,</span>
+            message<span class="token punctuation">:</span> error<span class="token punctuation">.</span>msg<span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    </code></pre>
+            <h4 id="validar-en-el-momento-adecuado">10. Validar en el Momento Adecuado</h4>
+            <p>Aplica las validaciones cuando los datos son recibidos por primera vez en el servidor para evitar errores
+                posteriores.</p>
+            <hr>
+            <h3 id="ejemplo-completo-aplicando-buenas-prácticas">Ejemplo Completo Aplicando Buenas Prácticas</h3>
+            <p><strong>Archivo <code>validationRules.js</code>:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> body <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+    
+<span class="token keyword">export</span> <span class="token keyword">const</span> <span class="token function-variable function">registerValidationRules</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Please enter a valid email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">normalizeEmail</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isLength</span><span class="token punctuation">(</span><span class="token punctuation">{</span> min<span class="token punctuation">:</span> <span class="token number">6</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Password must be at least 6 characters long'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">body</span><span class="token punctuation">(</span><span class="token string">'username'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">notEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username is required'</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">isAlphanumeric</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">withMessage</span><span class="token punctuation">(</span><span class="token string">'Username must be alphanumeric'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">escape</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    </code></pre>
+            <p><strong>Archivo <code>errorMiddleware.js</code>:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> validationResult <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express-validator'</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">export</span> <span class="token keyword">const</span> <span class="token function-variable function">handleValidationErrors</span> <span class="token operator">=</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> errors <span class="token operator">=</span> <span class="token function">validationResult</span><span class="token punctuation">(</span>req<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>errors<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+                status<span class="token punctuation">:</span> <span class="token string">'error'</span><span class="token punctuation">,</span>
+                message<span class="token punctuation">:</span> <span class="token string">'Validation failed'</span><span class="token punctuation">,</span>
+                errors<span class="token punctuation">:</span> errors<span class="token punctuation">.</span><span class="token function">array</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>error <span class="token operator">=&gt;</span> <span class="token punctuation">(</span><span class="token punctuation">{</span>
+                    field<span class="token punctuation">:</span> error<span class="token punctuation">.</span>param<span class="token punctuation">,</span>
+                    message<span class="token punctuation">:</span> error<span class="token punctuation">.</span>msg<span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    </code></pre>
+            <p><strong>Archivo <code>userRoutes.js</code>:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> registerValidationRules <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./validationRules.js'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> handleValidationErrors <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./errorMiddleware.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/register'</span><span class="token punctuation">,</span> <span class="token function">registerValidationRules</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> handleValidationErrors<span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User registered successfully'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+    </code></pre>
+            <p><strong>Archivo <code>app.js</code>:</strong></p>
+            <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+    <span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./userRoutes.js'</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>express<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    </code></pre>
+            <p>Estas buenas prácticas aseguran que <code>express-validator</code> se utilice de manera eficiente, limpia y
+                segura, optimizando la validación de datos en una aplicación Node.js y mejorando la experiencia del
+                desarrollador y del usuario.</p>
+    <hr>
+    <h3 id="módulo-7-introducción-a-ejs-para-node.js">Módulo 7: Introducción a EJS para Node.js</h3>
+    <p>EJS (Embedded JavaScript) es un motor de plantillas que permite integrar JavaScript en archivos HTML,
+        facilitando la generación de contenido dinámico en aplicaciones web. Al usar EJS con Express en Node.js,
+        puedes crear vistas dinámicas que presentan datos de forma interactiva y permiten una estructura modular y
+        mantenible para tus páginas web.</p>
+    <h4 id="¿qué-es-ejs">¿Qué es EJS?</h4>
+    <p>EJS es un motor de plantillas que permite la incrustación de JavaScript en HTML. A diferencia de otros
+        motores como Pug o Handlebars, EJS utiliza una sintaxis de JavaScript tradicional y sencilla que facilita el
+        aprendizaje y la integración en aplicaciones Node.js. Con EJS, es posible pasar datos dinámicos a la vista y
+        renderizar HTML con lógica condicional, bucles, y otros elementos propios de JavaScript, mejorando la
+        interactividad y personalización de las aplicaciones web.</p>
+    <h4 id="instalación-de-ejs">Instalación de EJS</h4>
+    <p>Para empezar a utilizar EJS, primero debes instalar el paquete en tu proyecto:</p>
+    <pre class=" language-bash"><code class="prism  language-bash"><span class="token function">npm</span> <span class="token function">install</span> ejs
+</code></pre>
+    <p>Luego, configura EJS como el motor de vistas en Express:</p>
+    <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+    <h3 id="¿por-qué-usar-ejs">¿Por Qué Usar EJS?</h3>
+    <p>EJS permite construir vistas dinámicas y modulares, lo cual es fundamental en aplicaciones web modernas. Al
+        usar EJS, puedes separar la lógica de presentación (frontend) de la lógica de negocio (backend), facilitando
+        el mantenimiento y el desarrollo de nuevas funcionalidades.</p>
+    <hr>
+    <h3 id="ejemplo-básico-renderización-de-una-vista-con-datos-dinámicos">Ejemplo Básico: Renderización de una
+        Vista con Datos Dinámicos</h3>
+    <p>A continuación, vamos a crear una vista que muestra un saludo personalizado basado en datos dinámicos
+        proporcionados por el servidor.</p>
+    <p><strong>Paso 1: Crear la Ruta</strong></p>
+    <p>Define una ruta en Express que renderice una vista EJS y envíe datos dinámicos a la misma:</p>
+    <p><strong>Archivo <code>app.js</code>:</strong></p>
+    <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/greeting'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> name <span class="token operator">=</span> <span class="token string">"Carlos"</span><span class="token punctuation">;</span>
+res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'greeting'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> name <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+    <p><strong>Explicación Paso a Paso:</strong></p>
+    <ol>
+        <li><code>app.set('view engine', 'ejs');</code> — Configura EJS como el motor de vistas de la aplicación.
+        </li>
+        <li><code>app.get('/greeting', (req, res) =&gt; {...});</code> — Define una ruta GET en
+            <code>/greeting</code> que renderizará la vista.</li>
+        <li><code>res.render('greeting', { name });</code> — Renderiza la vista <code>greeting.ejs</code> y envía un
+            objeto con el dato <code>name</code> a la vista.</li>
+    </ol>
+    <p><strong>Paso 2: Crear la Vista en EJS</strong></p>
+    <p>Crea un archivo llamado <code>greeting.ejs</code> en una carpeta llamada <code>views</code>:</p>
+    <p><strong>Archivo <code>views/greeting.ejs</code>:</strong></p>
+    <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Greeting<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello, &lt;%= name %&gt;!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+    <p><strong>Explicación de la Vista:</strong></p>
+    <ol>
+        <li><code>&lt;%= name %&gt;</code> — Incrusta el valor de <code>name</code> en el HTML. EJS usa
+            <code>&lt;%= ... %&gt;</code> para mostrar variables, permitiendo que los datos dinámicos se integren en
+            el HTML.</li>
+    </ol>
+    <p>Al acceder a <code>http://localhost:3000/greeting</code>, el servidor renderizará la vista
+        <code>greeting.ejs</code>, y mostrará <code>Hello, Carlos!</code>.</p>
+    <hr>
+    <h3 id="ejemplo-intermedio-estructuras-de-control-en-ejs">Ejemplo Intermedio: Estructuras de Control en EJS</h3>
+    <p>EJS permite usar estructuras de control, como condicionales y bucles, para manejar datos de forma dinámica.
+        Esto es útil para crear listas, mostrar mensajes condicionales y estructurar el HTML.</p>
+    <h4 id="ejemplo-lista-de-productos">Ejemplo: Lista de Productos</h4>
+    <p><strong>Paso 1: Crear la Ruta</strong></p>
+    <p>Define una nueva ruta que envíe un arreglo de productos a la vista:</p>
+    <p><strong>Archivo <code>app.js</code>:</strong></p>
+    <pre class=" language-javascript"><code class="prism  language-javascript">app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/products'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> products <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Laptop'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">1500</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Smartphone'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">700</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> name<span class="token punctuation">:</span> <span class="token string">'Tablet'</span><span class="token punctuation">,</span> price<span class="token punctuation">:</span> <span class="token number">300</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'products'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> products <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+    <p><strong>Paso 2: Crear la Vista con un Bucle</strong></p>
+    <p><strong>Archivo <code>views/products.ejs</code>:</strong></p>
+    <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Product List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Product List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+    &lt;% products.forEach(product =&gt; { %&gt;
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>&lt;%= product.name %&gt; - $&lt;%= product.price %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>%</span> <span class="token attr-name">});</span> <span class="token attr-name">%</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+    <p><strong>Explicación de la Vista:</strong></p>
+    <ol>
+        <li><code>&lt;% products.forEach(product =&gt; { %&gt; ... &lt;% }); %&gt;</code> — Usa un bucle
+            <code>forEach</code> para iterar sobre el arreglo de productos y mostrar cada uno en una lista.</li>
+        <li><code>&lt;%= product.name %&gt;</code> y <code>&lt;%= product.price %&gt;</code> — Muestra el nombre y
+            precio de cada producto.</li>
+    </ol>
+    <p>Este código generará una lista de productos con nombre y precio.</p>
+    <hr>
+    <h3 id="buenas-prácticas-para-usar-ejs">Buenas Prácticas para Usar EJS</h3>
+    <ol>
+        <li>
+            <p><strong>Organizar las Vistas en Módulos</strong>: Al estructurar la aplicación, organiza las vistas
+                en carpetas según su funcionalidad. Por ejemplo, coloca las vistas de usuario en
+                <code>views/users</code> y las vistas de productos en <code>views/products</code>.</p>
+        </li>
+        <li>
+            <p><strong>Usar <code>partials</code> para Reutilizar Código</strong>: EJS permite incluir
+                <code>partials</code>, que son fragmentos de código reutilizables, como el encabezado, el pie de
+                página y la barra de navegación.</p>
+            <p><strong>Ejemplo de <code>partial</code> para Encabezado:</strong></p>
+            <p><strong>Archivo <code>views/partials/header.ejs</code>:</strong></p>
+            <pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>header</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>My Website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>nav</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Home<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/products<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Products<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/contact<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>Contact<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>header</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+            <p><strong>Uso del <code>partial</code> en la Vista Principal:</strong></p>
+            <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My Website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+&lt;%- include('partials/header') %&gt; <span class="token comment">&lt;!-- Incluye el encabezado --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>main</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">&gt;</span></span>Welcome to my website<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Here you'll find our products and services.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>main</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+        </li>
+        <li>
+            <p><strong>Escapar Datos para Evitar Inyecciones</strong>: Usa <code>&lt;%= ... %&gt;</code> para
+                mostrar datos de usuario y evitar ataques de inyección. EJS escapa automáticamente el contenido de
+                <code>&lt;%= ... %&gt;</code> para prevenir riesgos de seguridad.</p>
+        </li>
+        <li>
+            <p><strong>Evitar Lógica Compleja en Vistas</strong>: EJS permite usar JavaScript en las vistas, pero es
+                recomendable mantener la lógica compleja en el backend para evitar sobrecargar las vistas y
+                facilitar el mantenimiento.</p>
+        </li>
+    </ol>
+    <hr>
+    <h3 id="ejemplo-completo-aplicación-con-ejs-y-router-en-express">Ejemplo Completo: Aplicación con EJS y
+        <code>Router</code> en Express</h3>
+    <p>Para demostrar el uso de EJS en conjunto con <code>Router</code>, vamos a crear una pequeña aplicación que
+        muestra una lista de usuarios y el perfil de cada uno.</p>
+    <p><strong>Paso 1: Configurar el <code>Router</code> y las Rutas</strong></p>
+    <p><strong>Archivo <code>app.js</code>:</strong></p>
+    <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> userRoutes <span class="token keyword">from</span> <span class="token string">'./routes/userRoutes.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span><span class="token string">'view engine'</span><span class="token punctuation">,</span> <span class="token string">'ejs'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/users'</span><span class="token punctuation">,</span> userRoutes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span><span class="token number">3000</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Server is running on port 3000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+    <p><strong>Paso 2: Crear las Rutas de Usuario</strong></p>
+    <p><strong>Archivo <code>routes/userRoutes.js</code>:</strong></p>
+    <pre class=" language-javascript"><code class="prism  language-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> Router <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> <span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Lista de usuarios simulada</span>
+<span class="token keyword">const</span> users <span class="token operator">=</span> <span class="token punctuation">[</span>
+<span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Alice'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">30</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Bob'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">25</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">{</span> id<span class="token punctuation">:</span> <span class="token number">3</span><span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token string">'Charlie'</span><span class="token punctuation">,</span> age<span class="token punctuation">:</span> <span class="token number">35</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta para listar usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'users'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> users <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Ruta para mostrar el perfil de un usuario específico</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+<span class="token keyword">const</span> user <span class="token operator">=</span> users<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span>u <span class="token operator">=&gt;</span> u<span class="token punctuation">.</span>id <span class="token operator">===</span> <span class="token function">parseInt</span><span class="token punctuation">(</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token string">'userProfile'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> user <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">404</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'User not found'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+    <p><strong>Paso 3: Crear las Vistas <code>users.ejs</code> y <code>userProfile.ejs</code></strong></p>
+    <p><strong>Archivo <code>views/users.ejs</code>:</strong></p>
+    <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>User List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>User List<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+    &lt;%
+
+users.forEach(user =&gt; { %&gt;
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>/users/&lt;%= user.id %&gt;<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>&lt;%= user.name %&gt; (Age: &lt;%= user.age %&gt;)<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>%</span> <span class="token attr-name">});</span> <span class="token attr-name">%</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+    <p><strong>Archivo <code>views/userProfile.ejs</code>:</strong></p>
+    <pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>UTF-8<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>User Profile<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>User Profile<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Name: &lt;%= user.name %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Age: &lt;%= user.age %&gt;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+    <p><strong>Explicación:</strong></p>
+    <ol>
+        <li><code>router.get('/')</code> — Define la ruta principal para listar usuarios.</li>
+        <li><code>router.get('/:id')</code> — Define la ruta de perfil, encontrando el usuario por ID y renderizando
+            <code>userProfile.ejs</code>.</li>
+        <li>En <code>users.ejs</code>, se genera una lista de usuarios con enlaces a sus perfiles individuales.</li>
+        <li>En <code>userProfile.ejs</code>, se muestra la información detallada del usuario.</li>
+    </ol>
+    <h3 id="resumen">Resumen</h3>
+    <p>EJS es un motor de plantillas sencillo y poderoso que facilita la creación de contenido dinámico en
+        aplicaciones Node.js. Al seguir una estructura modular con <code>Router</code> y buenas prácticas como el
+        uso de <code>partials</code> y la sanitización de datos, puedes construir aplicaciones web seguras,
+        eficientes y mantenibles.</p>
+    </div>
+</body>
+
+</html>

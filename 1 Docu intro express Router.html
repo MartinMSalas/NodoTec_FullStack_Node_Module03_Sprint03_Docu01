@@ -1,0 +1,259 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docu intro express Router</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="documentación-de-node.js-introducción-a-express-con-es-modules">Documentación de Node.js: Introducción a Express (con ES Modules)</h2>
+<h3 id="¿qué-es-express-repaso">1) ¿Qué es Express? REPASO</h3>
+<p><strong>Express.js</strong> es un framework minimalista y flexible para la creación de aplicaciones web y APIs en <strong>Node.js</strong>. Express es popular en el desarrollo web debido a su simplicidad y a la flexibilidad que ofrece, permitiendo que los desarrolladores integren solo los módulos necesarios para cada aplicación. Esto se diferencia de otros frameworks más grandes y complejos que pueden hacer que la aplicación sea menos flexible y difícil de mantener.</p>
+<p>Express permite crear aplicaciones de una sola página, aplicaciones web multipágina y APIs completas de forma rápida y organizada. Su naturaleza minimalista permite un control detallado sobre los componentes y la posibilidad de personalizar la aplicación mediante middleware y módulos adicionales.</p>
+<hr>
+<h3 id="características-avanzadas-de-express-repaso">2) Características Avanzadas de Express REPASO</h3>
+<p>Aquí cubrimos dos características avanzadas de Express: el uso de <strong>rutas anidadas y parámetros</strong> y la capacidad de <strong>modularizar el enrutamiento</strong> con <code>Express.Router</code>.</p>
+<hr>
+<h4 id="soporte-para-rutas-anidadas-y-parámetros">1. Soporte para Rutas Anidadas y Parámetros</h4>
+<p>Express permite definir rutas dinámicas con <strong>parámetros de ruta</strong> que pueden capturar partes específicas de la URL. Esto es útil para crear rutas anidadas o complejas que permiten acceder a recursos específicos (por ejemplo, usuarios y sus posts, o categorías y productos en una tienda en línea).</p>
+<h5 id="ejemplo-de-rutas-anidadas-y-parámetros">Ejemplo de Rutas Anidadas y Parámetros</h5>
+<p>En el siguiente ejemplo, usamos una ruta con parámetros para gestionar posts específicos de un usuario:</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Definición de una ruta con parámetros para usuarios y sus posts</span>
+app<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/usuarios/:usuarioId/posts/:postId'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> usuarioId<span class="token punctuation">,</span> postId <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Mostrando el post </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>postId<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> del usuario </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>usuarioId<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Aquí:</p>
+<ul>
+<li><code>:usuarioId</code> y <code>:postId</code> son <strong>parámetros de ruta</strong> que capturan valores específicos de la URL.</li>
+<li><code>req.params</code> contiene los valores extraídos de la URL. Por ejemplo, si la URL solicitada es <code>/usuarios/123/posts/456</code>, entonces <code>req.params.usuarioId</code> sería <code>"123"</code> y <code>req.params.postId</code> sería <code>"456"</code>.</li>
+</ul>
+<p>Este enfoque es especialmente útil para manejar estructuras de URLs más complejas, como <code>/categorias/:categoriaId/productos/:productoId</code>.</p>
+<hr>
+<h4 id="enrutamiento-avanzado-con-express.router">2. Enrutamiento Avanzado con Express.Router</h4>
+<p>Para aplicaciones grandes, el código de enrutamiento puede volverse complejo si todas las rutas están en un solo archivo. Express ofrece <strong>Express.Router</strong>, una herramienta que permite crear “mini aplicaciones” de rutas que se pueden importar y usar en la aplicación principal. Esto ayuda a mantener el código modular, organizado y fácil de mantener.</p>
+<p><strong>Express.Router</strong> permite:</p>
+<ul>
+<li>Dividir las rutas en archivos separados, organizando el código en módulos.</li>
+<li>Asignar grupos de rutas a una URL base específica en el servidor principal.</li>
+</ul>
+<h5 id="ejemplo-de-enrutamiento-modular-con-express.router">Ejemplo de Enrutamiento Modular con Express.Router</h5>
+<ol>
+<li>
+<p><strong>Definir las Rutas en un Módulo</strong><br>
+Creamos un archivo <code>blog.mjs</code> en la carpeta <code>routes</code> que contiene las rutas para los blogs:</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// routes/blog.mjs</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> router <span class="token operator">=</span> express<span class="token punctuation">.</span><span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Definición de las rutas del blog</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Lista de blogs'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Blog con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>req<span class="token punctuation">.</span>params<span class="token punctuation">.</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Nuevo blog creado'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Importar el Módulo de Rutas en la Aplicación Principal</strong><br>
+En el archivo principal <code>server.mjs</code>, importamos el módulo de rutas y lo usamos en nuestra aplicación Express con una URL base <code>/blogs</code>:</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// server.mjs</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> blogRouter <span class="token keyword">from</span> <span class="token string">'./routes/blog.js'</span><span class="token punctuation">;</span> <span class="token comment">// Importamos el módulo de rutas</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/blogs'</span><span class="token punctuation">,</span> blogRouter<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Asignamos las rutas al prefijo '/blogs'</span>
+
+<span class="token keyword">const</span> PORT <span class="token operator">=</span> <span class="token number">3000</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span>PORT<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Servidor corriendo en el puerto </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>PORT<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>En este caso:</p>
+<ul>
+<li>La URL base <code>/blogs</code> hace que todas las rutas definidas en <code>blog.js</code> respondan con ese prefijo.</li>
+<li><code>GET /blogs</code> responderá con <code>"Lista de blogs"</code>.</li>
+<li><code>GET /blogs/:id</code> responderá con <code>"Blog con ID: &lt;id&gt;"</code>.</li>
+<li><code>POST /blogs</code> permitirá crear un nuevo blog.</li>
+</ul>
+</li>
+</ol>
+<p>Este enfoque modular permite agrupar rutas relacionadas en archivos separados, manteniendo el código claro y organizado.</p>
+<hr>
+<h3 id="tipos-de-peticiones-http-en-express-repaso">3) Tipos de Peticiones HTTP en Express REPASO</h3>
+<p>En esta sección, aprenderemos a configurar cada tipo de petición HTTP (<code>GET</code>, <code>POST</code>, <code>PUT</code>, y <code>DELETE</code>) utilizando <strong>enrutado avanzado</strong> con <code>Express.Router</code>. Este enfoque modular facilita la organización del código, especialmente en aplicaciones grandes.</p>
+<hr>
+<h4 id="configuración-del-módulo-de-rutas">3.1 Configuración del Módulo de Rutas</h4>
+<p>Para estructurar las rutas en módulos, crearemos un archivo de rutas <code>usuarios.js</code> en una carpeta <code>routes</code>, donde manejaremos las diferentes peticiones para la ruta <code>/usuarios</code>.</p>
+<ol>
+<li>
+<p><strong>Crear el Archivo de Rutas <code>usuarios.js</code></strong>:</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// routes/usuarios.js</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> router <span class="token operator">=</span> express<span class="token punctuation">.</span><span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener todos los usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Aquí está la lista de todos los usuarios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener un usuario específico por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Aquí está la información del usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Crear un nuevo usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nuevoUsuario <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Nuevo usuario creado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>nuevoUsuario<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Actualizar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> datosActualizados <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido actualizado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>datosActualizados<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Eliminar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">delete</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido eliminado`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> router<span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Integrar el Módulo de Rutas en el Servidor Principal</strong>:</p>
+<p>En el archivo principal <code>server.js</code>, importamos y utilizamos el módulo de rutas para asignarle el prefijo <code>/usuarios</code>.</p>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// server.js</span>
+<span class="token keyword">import</span> express <span class="token keyword">from</span> <span class="token string">'express'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> usuariosRouter <span class="token keyword">from</span> <span class="token string">'./routes/usuarios.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> app <span class="token operator">=</span> <span class="token function">express</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Middleware para manejar JSON en el cuerpo de las solicitudes</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>express<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Asignamos el módulo de rutas al prefijo '/usuarios'</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/usuarios'</span><span class="token punctuation">,</span> usuariosRouter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> PORT <span class="token operator">=</span> <span class="token number">3000</span><span class="token punctuation">;</span>
+app<span class="token punctuation">.</span><span class="token function">listen</span><span class="token punctuation">(</span>PORT<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> 
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Servidor corriendo en el puerto </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>PORT<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+</ol>
+<hr>
+<h4 id="tipos-de-peticiones-http-en-el-módulo-usuarios.js">3.2 Tipos de Peticiones HTTP en el Módulo <code>usuarios.js</code></h4>
+<p>A continuación, explicamos cada tipo de petición HTTP implementado en el módulo de rutas <code>usuarios.js</code>:</p>
+<ol>
+<li>
+<p><strong>Peticiones <code>GET</code></strong></p>
+<ul>
+<li><strong>Obtener todos los usuarios</strong>: Devuelve una lista de todos los usuarios.</li>
+<li><strong>Obtener un usuario específico</strong>: Utiliza un parámetro <code>id</code> para recuperar información de un usuario específico.</li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Obtener todos los usuarios</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Aquí está la lista de todos los usuarios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Obtener un usuario específico por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Aquí está la información del usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Peticiones <code>POST</code></strong></p>
+<ul>
+<li><strong>Crear un nuevo usuario</strong>: Recibe los datos del nuevo usuario en el cuerpo de la solicitud y simula la creación de un nuevo usuario.</li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Crear un nuevo usuario</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nuevoUsuario <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Nuevo usuario creado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>nuevoUsuario<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Peticiones <code>PUT</code></strong></p>
+<ul>
+<li><strong>Actualizar un usuario existente</strong>: Utiliza el parámetro <code>id</code> para identificar al usuario y los datos en el cuerpo de la solicitud para actualizar su información.</li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Actualizar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> datosActualizados <span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>
+        <span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido actualizado con los datos: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>datosActualizados<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+<li>
+<p><strong>Peticiones <code>DELETE</code></strong></p>
+<ul>
+<li><strong>Eliminar un usuario</strong>: Utiliza el parámetro <code>id</code> para identificar al usuario a eliminar y simula su eliminación.</li>
+</ul>
+<pre class=" language-javascript"><code class="prism  language-javascript"><span class="token comment">// Eliminar un usuario por ID</span>
+router<span class="token punctuation">.</span><span class="token keyword">delete</span><span class="token punctuation">(</span><span class="token string">'/:id'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>req<span class="token punctuation">,</span> res<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> id <span class="token punctuation">}</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>params<span class="token punctuation">;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token template-string"><span class="token string">`Usuario con ID: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> ha sido eliminado`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+</ol>
+<hr>
+<h3 id="resumen-de-los-métodos-http-en-express">Resumen de los Métodos HTTP en Express</h3>
+
+<table>
+<thead>
+<tr>
+<th><strong>Método</strong></th>
+<th><strong>Acción principal</strong></th>
+<th><strong>Ejemplo en una tienda</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code></td>
+<td>Crear un nuevo recurso</td>
+<td>Registrar un nuevo usuario</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>Eliminar un recurso existente</td>
+<td>Borrar un producto</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td>Actualizar (o crear) un recurso</td>
+<td>Cambiar el precio de un producto</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td>Solicitar/ver información del servidor</td>
+<td>Ver lista de productos</td>
+</tr>
+</tbody>
+</table><p>Este resumen presenta los métodos HTTP principales utilizados en Express, con una acción típica asociada y ejemplos en el contexto de una tienda.</p>
+</div>
+</body>
+
+</html>
